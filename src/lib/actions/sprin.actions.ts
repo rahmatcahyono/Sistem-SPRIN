@@ -83,7 +83,7 @@ export async function getPersonelWithAvailability(
   });
 
   const results = await Promise.all(
-    allPersonel.map(async (p) => {
+    allPersonel.map(async (p: any) => {
       const conflict = await checkPersonelAvailability(p.id, startDate, endDate, excludeSprinId);
       return { ...p, conflict };
     })
@@ -351,7 +351,7 @@ export async function approveConflictRequest(conflictRequestId: string) {
   }
 
   const userId = session.user.id;
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: any) => {
     // 1. Update conflict request status
     await tx.sprinConflictRequest.update({
       where: { id: conflictRequestId },
@@ -495,7 +495,7 @@ export async function assignReplacementPersonel(sprinId: string, newPersonelIds:
     }
   }
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: any) => {
     // Add new assignments
     await tx.sprinAssignment.createMany({
       data: newPersonelIds.map((personelId) => ({
@@ -604,7 +604,7 @@ export async function konfirmasiTTD(sprinId: string) {
   }
 
   const userId3 = session.user.id;
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: any) => {
     await tx.sprin.update({
       where: { id: sprinId },
       data: { status: 'ACTIVE' },
@@ -651,10 +651,10 @@ export async function batalkanSprin(sprinId: string, reason?: string) {
     return { error: 'Hanya sprin berstatus Draft atau Menunggu TTD yang dapat dibatalkan' };
   }
 
-  const personelIds = sprin.assignments.map((a) => a.personelId);
+  const personelIds = sprin.assignments.map((a: any) => a.personelId);
   const userId4 = session.user.id;
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: any) => {
     // Cancel sprin
     await tx.sprin.update({
       where: { id: sprinId },

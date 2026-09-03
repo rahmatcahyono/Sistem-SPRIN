@@ -40,15 +40,15 @@ export default async function DashboardPage({
   ]);
 
   const pendingConflicts = conflictRequests.filter(
-    (c) => c.status === 'PENDING' && c.approvingOperatorId === (session?.user as any)?.id
+    (c: any) => c.status === 'PENDING' && c.approvingOperatorId === (session?.user as any)?.id
   );
 
   const stats = {
     total: sprins.length,
-    active: sprins.filter((s) => s.status === 'ACTIVE').length,
-    pendingTTD: sprins.filter((s) => s.status === 'PENDING_TTD').length,
-    draft: sprins.filter((s) => s.status === 'DRAFT').length,
-    needsReplacement: sprins.filter((s) => s.status === 'REPLACED_PENDING').length,
+    active: sprins.filter((s: any) => s.status === 'ACTIVE').length,
+    pendingTTD: sprins.filter((s: any) => s.status === 'PENDING_TTD').length,
+    draft: sprins.filter((s: any) => s.status === 'DRAFT').length,
+    needsReplacement: sprins.filter((s: any) => s.status === 'REPLACED_PENDING').length,
   };
 
   return (
@@ -121,7 +121,7 @@ export default async function DashboardPage({
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {sprins.map((sprin) => (
+          {sprins.map((sprin: any) => (
             <SprinCard key={sprin.id} sprin={sprin as any} />
           ))}
         </div>
