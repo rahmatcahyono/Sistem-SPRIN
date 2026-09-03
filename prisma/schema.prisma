@@ -1,0 +1,199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum Division {
+  SUMDA_LOGISTIK
+  KERMA
+  URKEU
+  TAUD
+  REN
+  OPSNAL
+  GASBIN
+  RIKUWASTU
+  DOKINFO
+  TEKPOL
+}
+
+enum SprinType {
+  BIASA
+  POKJA
+}
+
+enum SprinStatus {
+  DRAFT
+  PENDING_TTD
+  ACTIVE
+  CANCELLED
+  REPLACED_PENDING
+}
+
+enum PersonelStatus {
+  FREE
+  ON_SPRIN
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  OVERRIDDEN
+  CANCELLED
+}
+
+enum ConflictRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ============================================================
+// MODELS
+// ============================================================
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  username  String   @unique
+  password  String
+  division  Division
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sprins              Sprin[]
+  conflictRequests    SprinConflictRequest[] @relation("RequestingOperator")
+  approvedConflicts   SprinConflictRequest[] @relation("ApprovingOperator")
+  auditLogs           AuditLog[]
+  notifications       Notification[]
+
+  @@map("users")
+}
+
+model Personel {
+  id        String         @id @default(cuid())
+  nrp       String         @unique
+  name      String
+  rank      String
+  jabatan   String
+  division  Division
+  status    PersonelStatus @default(FREE)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  assignments          SprinAssignment[]
+  conflictRequests     SprinConflictRequest[]
+  replacedAssignments  SprinAssignment[]       @relation("ReplacedByPersonel")
+
+  @@map("personel")
+}
+
+model Sprin {
+  id          String      @id @default(cuid())
+  sprinNumber String      @unique
+  type        SprinType
+  title       String
+  description String?     @db.Text
+  dasar       String?     @db.Text  // Dasar hukum / pertimbangan
+  untuk                String?     @db.Text  // Diktum Untuk / Rincian tugas khusus
+  penandatanganJabatan String?     @db.Text  // Jabatan pejabat pemberi sprin
+  penandatanganNama    String?               // Nama pejabat pemberi sprin
+  penandatanganPangkat String?               // Pangkat & NRP pejabat pemberi sprin
+  startDate            DateTime
+  endDate     DateTime
+  status      SprinStatus @default(DRAFT)
+  pdfUrl      String?
+
+  createdByOperatorId String
+  createdBy           User    @relation(fields: [createdByOperatorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignments              SprinAssignment[]
+  conflictRequestsAsExisting   SprinConflictRequest[] @relation("ExistingSprin")
+  conflictRequestsAsRequested  SprinConflictRequest[] @relation("RequestedSprin")
+  auditLogs                    AuditLog[]
+
+  @@map("sprins")
+}
+
+model SprinAssignment {
+  id        String           @id @default(cuid())
+  sprinId   String
+  personelId String
+  status    AssignmentStatus @default(ASSIGNED)
+
+  replacedByPersonelId String?
+  replacedByPersonel   Personel? @relation("ReplacedByPersonel", fields: [replacedByPersonelId], references: [id])
+
+  sprin    Sprin    @relation(fields: [sprinId], references: [id], onDelete: Cascade)
+  personel Personel @relation(fields: [personelId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([sprinId, personelId])
+  @@map("sprin_assignments")
+}
+
+model SprinConflictRequest {
+  id                   String                @id @default(cuid())
+  existingSprinId      String
+  requestedSprinId     String
+  targetPersonelId     String
+  requestingOperatorId String
+  approvingOperatorId  String?
+  status               ConflictRequestStatus @default(PENDING)
+  reason               String                @db.Text
+  rejectionReason      String?               @db.Text
+
+  existingSprin        Sprin    @relation("ExistingSprin", fields: [existingSprinId], references: [id])
+  requestedSprin       Sprin    @relation("RequestedSprin", fields: [requestedSprinId], references: [id])
+  targetPersonel       Personel @relation(fields: [targetPersonelId], references: [id])
+  requestingOperator   User     @relation("RequestingOperator", fields: [requestingOperatorId], references: [id])
+  approvingOperator    User?    @relation("ApprovingOperator", fields: [approvingOperatorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sprin_conflict_requests")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  sprinId   String?
+  userId    String?
+  action    String
+  details   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  sprin Sprin? @relation(fields: [sprinId], references: [id])
+  user  User?  @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
