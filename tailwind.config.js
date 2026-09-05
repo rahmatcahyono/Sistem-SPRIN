@@ -48,6 +48,37 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        tactical: {
+          bg: '#080D1A',
+          surface: '#0E1726',
+          elevated: '#131F33',
+          inset: '#060A14',
+          border: 'rgba(255, 255, 255, 0.08)',
+          'border-active': 'rgba(59, 130, 246, 0.3)',
+        },
+        police: {
+          navy: {
+            DEFAULT: '#0F2752',
+            deep: '#091B3D',
+            light: '#1B3A70',
+          },
+          gold: {
+            DEFAULT: '#D4AF37',
+            khaki: '#C5A059',
+            light: '#E2C275',
+            dim: 'rgba(212, 175, 55, 0.12)',
+          },
+          action: {
+            DEFAULT: '#2563EB',
+            hover: '#1D4ED8',
+            glow: 'rgba(37, 99, 235, 0.35)',
+          },
+        },
+        typo: {
+          primary: '#F1F5F9',
+          secondary: '#94A3B8',
+          muted: '#64748B',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

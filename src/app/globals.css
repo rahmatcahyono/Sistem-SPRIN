@@ -2,35 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 12%;
-    --primary: 221 83% 40%;
+    /* Tactical Command Center Dark Surfaces */
+    --background: 222 47% 7%;          /* #080D1A */
+    --foreground: 210 40% 96%;          /* #F1F5F9 */
+    --card: 217 33% 10%;                /* #0E1726 */
+    --card-foreground: 210 40% 96%;     /* #F1F5F9 */
+    --popover: 217 33% 10%;             /* #0E1726 */
+    --popover-foreground: 210 40% 96%;  /* #F1F5F9 */
+    --primary: 221 83% 53%;             /* #2563EB */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 15% 94%;
-    --secondary-foreground: 215 25% 20%;
-    --muted: 210 15% 94%;
-    --muted-foreground: 215 15% 48%;
-    --accent: 221 83% 95%;
-    --accent-foreground: 221 83% 30%;
-    --destructive: 0 84% 55%;
+    --secondary: 215 28% 14%;           /* #131F33 */
+    --secondary-foreground: 210 40% 96%;
+    --muted: 217 28% 13%;               /* #111C2E */
+    --muted-foreground: 215 20% 65%;    /* #94A3B8 */
+    --accent: 215 28% 16%;              /* #182740 */
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 20% 88%;
-    --input: 214 20% 88%;
-    --ring: 221 83% 40%;
-    --radius: 0.625rem;
+    --border: 217 25% 18%;              /* rgba(255, 255, 255, 0.09) */
+    --input: 217 25% 18%;
+    --ring: 221 83% 53%;
+    --radius: 0.875rem;
 
-    /* Custom police/gov color tokens */
+    /* Police & Tribrata Identity Tokens */
     --police-blue: 221 83% 40%;
-    --police-blue-dark: 221 83% 28%;
-    --police-gold: 42 87% 55%;
+    --police-blue-dark: 222 47% 7%;
+    --police-gold: 43 68% 52%;          /* #D4AF37 */
+    --police-gold-khaki: 39 48% 56%;    /* #C5A059 */
     --status-free: 142 72% 42%;
     --status-busy: 0 84% 55%;
     --status-pending: 38 92% 50%;
@@ -41,40 +43,118 @@
   * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    letter-spacing: -0.01em;
+    background-color: #080D1A;
+    color: #F1F5F9;
   }
-  h1, h2, h3 {
-    font-family: 'Poppins', sans-serif;
+  h1, h2, h3, h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
+  /* Rich Police Gradient (Tactical Dark) */
   .gradient-police {
-    background: linear-gradient(135deg, hsl(221, 83%, 28%) 0%, hsl(221, 83%, 45%) 50%, hsl(210, 83%, 52%) 100%);
+    background: linear-gradient(175deg, #080D1A 0%, #0B172E 45%, #0F2752 100%);
   }
   .gradient-hero {
-    background: linear-gradient(135deg, hsl(221, 83%, 12%) 0%, hsl(221, 83%, 28%) 60%, hsl(210, 60%, 40%) 100%);
+    background: linear-gradient(135deg, #080D1A 0%, #0D2146 60%, #173872 100%);
   }
+
+  /* Antigravity Tactical Dark Floating Cards & Sheets */
+  .card-antigravity {
+    background: #0E1726;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 4px 20px -2px rgba(0, 0, 0, 0.5),
+      0 12px 36px -4px rgba(0, 0, 0, 0.4);
+    border-radius: 1rem;
+    color: #F1F5F9;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card-antigravity-interactive {
+    background: #0E1726;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 4px 20px -2px rgba(0, 0, 0, 0.5),
+      0 12px 36px -4px rgba(0, 0, 0, 0.4);
+    border-radius: 1rem;
+    color: #F1F5F9;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card-antigravity-interactive:hover {
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      0 12px 28px -2px rgba(0, 0, 0, 0.6),
+      0 24px 48px -6px rgba(37, 99, 235, 0.12);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .sheet-antigravity {
+    background: #0E1726;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+      0 4px 20px -2px rgba(0, 0, 0, 0.5),
+      0 12px 36px -6px rgba(0, 0, 0, 0.4);
+    border-radius: 1.125rem;
+    color: #F1F5F9;
+  }
+
+  /* Inset Tactical Container (Untuk Diktum Perintah & Kutipan) */
+  .box-tactical-inset {
+    background: #060A14;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 0.875rem;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+  }
+
   .glass {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(14, 23, 38, 0.8);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .glass-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(14, 23, 38, 0.95);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
+
+  /* Neon Status Indicators */
+  .neon-glow-emerald {
+    box-shadow: 0 0 14px rgba(52, 211, 153, 0.35);
+  }
+  .neon-glow-amber {
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
+  }
+  .neon-glow-blue {
+    box-shadow: 0 0 14px rgba(37, 99, 235, 0.35);
+  }
+  .neon-glow-rose {
+    box-shadow: 0 0 14px rgba(248, 113, 113, 0.35);
+  }
+  .neon-glow-gold {
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.25);
+  }
+
   .sidebar-item {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
-    @apply text-blue-100/80 hover:text-white hover:bg-white/10;
+    @apply flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200;
+    @apply text-slate-300/80 hover:text-white hover:bg-white/[0.08];
   }
   .sidebar-item.active {
-    @apply bg-white/20 text-white;
+    @apply bg-gradient-to-r from-blue-700 to-indigo-700 text-white shadow-lg font-semibold border border-blue-500/30;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.35);
   }
   .status-badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border;
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border;
   }
   .animate-fade-in { animation: fadeIn 0.3s ease-out; }
   .animate-shake { animation: shake 0.4s ease-in-out; }

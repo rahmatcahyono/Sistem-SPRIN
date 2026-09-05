@@ -16,10 +16,26 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
     lineHeight: 1.35,
   },
-  // ── KOP SURAT ──────────────────────────────────────────────────────────────
-  headerContainer: {
+  // ── KOP SURAT (Di Sebelah Kiri) ─────────────────────────────────────────────
+  kopContainer: {
+    alignSelf: 'flex-start',
     alignItems: 'center',
     marginBottom: 8,
+    paddingBottom: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: '#000000',
+  },
+  kopText: {
+    fontSize: 9.5,
+    fontFamily: 'Helvetica',
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  kopTextBold: {
+    fontSize: 9.5,
+    fontFamily: 'Helvetica-Bold',
+    textAlign: 'center',
+    letterSpacing: 0.5,
   },
   headerText: {
     fontSize: 10,
@@ -32,27 +48,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 1,
   },
-  logoTribrata: {
-    width: 52,
-    height: 50,
-    objectFit: 'contain',
-    marginVertical: 4,
-  },
   dividerLine: {
     borderBottomWidth: 2,
     borderBottomColor: '#000',
     marginBottom: 8,
   },
-  dividerLineThin: {
-    borderBottomWidth: 0.75,
-    borderBottomColor: '#000',
-    marginBottom: 1,
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 2,
+    marginBottom: 6,
+  },
+  logoTribrata: {
+    width: 48,
+    height: 46,
+    objectFit: 'contain',
   },
   // ── TITLE ──────────────────────────────────────────────────────────────────
   titleContainer: {
     alignItems: 'center',
-    marginBottom: 14,
-    marginTop: 4,
+    marginBottom: 12,
+    marginTop: 2,
   },
   title: {
     fontSize: 11,
@@ -232,13 +247,10 @@ const styles = StyleSheet.create({
 // SHARED COMPONENTS
 // ─────────────────────────────────────────────────────────────────────────────
 const KopSurat = () => (
-  <View style={styles.headerContainer}>
-    <Text style={styles.headerText}>MARKAS BESAR</Text>
-    <Text style={styles.headerTextBold}>KEPOLISIAN NEGARA REPUBLIK INDONESIA</Text>
-    <Text style={styles.headerTextBold}>PUSAT PENELITIAN DAN PENGEMBANGAN</Text>
-    <Image style={styles.logoTribrata} src="/logo-tribrata.png" />
-    <View style={styles.dividerLine} />
-    <View style={styles.dividerLineThin} />
+  <View style={styles.kopContainer}>
+    <Text style={styles.kopText}>MARKAS BESAR</Text>
+    <Text style={styles.kopTextBold}>KEPOLISIAN NEGARA REPUBLIK INDONESIA</Text>
+    <Text style={styles.kopTextBold}>PUSAT PENELITIAN DAN PENGEMBANGAN</Text>
   </View>
 );
 
@@ -309,12 +321,18 @@ export const SprinBiasaDocument: React.FC<SprinBiasaProps> = ({
         PAGE 1: SURAT PERINTAH UTAMA
     ═══════════════════════════════════════════════════════════════ */}
     <Page size="A4" style={styles.page}>
+      {/* Kop Surat di Sebelah Kiri */}
       <KopSurat />
+
+      {/* Logo Tribrata di Tengah (Ukuran Sesuai Dokumen Resmi) */}
+      <View style={styles.logoContainer}>
+        <Image style={styles.logoTribrata} src="/logo-tribrata.png" />
+      </View>
 
       {/* Title */}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>SURAT PERINTAH</Text>
-        <Text style={styles.subtitle}>Nomor: Sprin/ {sprinNumber}</Text>
+        <Text style={styles.subtitle}>Nomor : Sprin/ {sprinNumber}</Text>
       </View>
 
       {/* Pertimbangan */}
