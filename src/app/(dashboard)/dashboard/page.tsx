@@ -39,16 +39,20 @@ export default async function DashboardPage({
     getOperatorList(),
   ]);
 
-  const pendingConflicts = conflictRequests.filter(
-    (c: any) => c.status === 'PENDING' && c.approvingOperatorId === (session?.user as any)?.id
+  const safeSprins = Array.isArray(sprins) ? sprins : [];
+  const safeConflicts = Array.isArray(conflictRequests) ? conflictRequests : [];
+  const safeOperators = Array.isArray(operators) ? operators : [];
+
+  const pendingConflicts = safeConflicts.filter(
+    (c: any) => c?.status === 'PENDING' && c?.approvingOperatorId === (session?.user as any)?.id
   );
 
   const stats = {
-    total: sprins.length,
-    active: sprins.filter((s: any) => s.status === 'ACTIVE').length,
-    pendingTTD: sprins.filter((s: any) => s.status === 'PENDING_TTD').length,
-    draft: sprins.filter((s: any) => s.status === 'DRAFT').length,
-    needsReplacement: sprins.filter((s: any) => s.status === 'REPLACED_PENDING').length,
+    total: safeSprins.length,
+    active: safeSprins.filter((s: any) => s?.status === 'ACTIVE').length,
+    pendingTTD: safeSprins.filter((s: any) => s?.status === 'PENDING_TTD').length,
+    draft: safeSprins.filter((s: any) => s?.status === 'DRAFT').length,
+    needsReplacement: safeSprins.filter((s: any) => s?.status === 'REPLACED_PENDING').length,
   };
 
   return (
@@ -100,11 +104,11 @@ export default async function DashboardPage({
       <DashboardFilters
         currentUserId={session?.user?.id || ''}
         currentUserName={session?.user?.name}
-        operators={operators as any}
+        operators={safeOperators as any}
       />
 
       {/* Sprin list */}
-      {sprins.length === 0 ? (
+      {safeSprins.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-2xl border border-border">
           <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
             <FilePlus className="w-8 h-8 text-muted-foreground/40" />
@@ -121,7 +125,7 @@ export default async function DashboardPage({
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {sprins.map((sprin: any) => (
+          {safeSprins.map((sprin: any) => (
             <SprinCard key={sprin.id} sprin={sprin as any} />
           ))}
         </div>

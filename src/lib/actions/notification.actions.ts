@@ -10,51 +10,75 @@ export async function createNotification(data: {
   message: string;
   link?: string;
 }) {
-  return prisma.notification.create({
-    data,
-  });
+  try {
+    return await prisma.notification.create({
+      data,
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error creating notification:', err);
+    return null;
+  }
 }
 
 export async function getNotifications() {
-  const session = await auth();
-  if (!session?.user?.id) return [];
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return [];
 
-  return prisma.notification.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-  });
+    return await prisma.notification.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error fetching notifications:', err);
+    return [];
+  }
 }
 
 export async function getUnreadCount() {
-  const session = await auth();
-  if (!session?.user?.id) return 0;
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return 0;
 
-  return prisma.notification.count({
-    where: { userId: session.user.id, isRead: false },
-  });
+    return await prisma.notification.count({
+      where: { userId: session.user.id, isRead: false },
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error fetching unread count:', err);
+    return 0;
+  }
 }
 
 export async function markAsRead(notificationId: string) {
-  const session = await auth();
-  if (!session?.user?.id) return;
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return;
 
-  await prisma.notification.update({
-    where: { id: notificationId, userId: session.user.id },
-    data: { isRead: true },
-  });
+    await prisma.notification.update({
+      where: { id: notificationId, userId: session.user.id },
+      data: { isRead: true },
+    });
 
-  revalidatePath('/');
+    revalidatePath('/');
+  } catch (err) {
+    console.error('[PRISMA] Error marking notification as read:', err);
+  }
 }
 
 export async function markAllAsRead() {
-  const session = await auth();
-  if (!session?.user?.id) return;
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return;
 
-  await prisma.notification.updateMany({
-    where: { userId: session.user.id, isRead: false },
-    data: { isRead: true },
-  });
+    await prisma.notification.updateMany({
+      where: { userId: session.user.id, isRead: false },
+      data: { isRead: true },
+    });
 
-  revalidatePath('/');
+    revalidatePath('/');
+  } catch (err) {
+    console.error('[PRISMA] Error marking all notifications as read:', err);
+  }
 }
+

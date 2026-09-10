@@ -712,95 +712,115 @@ export async function getSprinList(filters?: {
   operatorId?: string;
   myOnly?: boolean;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) return [];
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return [];
 
-  const where: any = {};
-  if (filters?.type && filters.type !== 'ALL') where.type = filters.type;
-  if (filters?.status && filters.status !== 'ALL') where.status = filters.status;
+    const where: any = {};
+    if (filters?.type && filters.type !== 'ALL') where.type = filters.type;
+    if (filters?.status && filters.status !== 'ALL') where.status = filters.status;
 
-  if (filters?.myOnly) {
-    where.createdByOperatorId = session.user.id;
-  } else if (filters?.operatorId && filters.operatorId !== 'ALL') {
-    where.createdByOperatorId = filters.operatorId;
-  }
+    if (filters?.myOnly) {
+      where.createdByOperatorId = session.user.id;
+    } else if (filters?.operatorId && filters.operatorId !== 'ALL') {
+      where.createdByOperatorId = filters.operatorId;
+    }
 
-  if (filters?.division && filters.division !== 'ALL') {
-    where.createdBy = { division: filters.division };
-  } else if (filters?.divisionOnly) {
-    where.createdBy = { division: (session.user as any).division };
-  }
+    if (filters?.division && filters.division !== 'ALL') {
+      where.createdBy = { division: filters.division };
+    } else if (filters?.divisionOnly) {
+      where.createdBy = { division: (session.user as any).division };
+    }
 
-  return prisma.sprin.findMany({
-    where,
-    include: {
-      createdBy: { select: { id: true, name: true, division: true } },
-      assignments: {
-        where: { status: 'ASSIGNED' },
-        include: { personel: { select: { name: true, rank: true, nrp: true } } },
+    return await prisma.sprin.findMany({
+      where,
+      include: {
+        createdBy: { select: { id: true, name: true, division: true } },
+        assignments: {
+          where: { status: 'ASSIGNED' },
+          include: { personel: { select: { name: true, rank: true, nrp: true } } },
+        },
+        _count: { select: { assignments: true } },
       },
-      _count: { select: { assignments: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error fetching sprin list:', err);
+    return [];
+  }
 }
 
 export async function getOperatorList() {
-  return prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      division: true,
-      username: true,
-    },
-    orderBy: { division: 'asc' },
-  });
+  try {
+    return await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        division: true,
+        username: true,
+      },
+      orderBy: { division: 'asc' },
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error fetching operator list:', err);
+    return [];
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET SPRIN DETAIL
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getSprinDetail(sprinId: string) {
-  return prisma.sprin.findUnique({
-    where: { id: sprinId },
-    include: {
-      createdBy: { select: { id: true, name: true, division: true } },
-      assignments: {
-        include: {
-          personel: true,
-          replacedByPersonel: true,
+  try {
+    return await prisma.sprin.findUnique({
+      where: { id: sprinId },
+      include: {
+        createdBy: { select: { id: true, name: true, division: true } },
+        assignments: {
+          include: {
+            personel: true,
+            replacedByPersonel: true,
+          },
+          orderBy: { createdAt: 'asc' },
         },
-        orderBy: { createdAt: 'asc' },
+        auditLogs: {
+          include: { user: { select: { name: true, division: true } } },
+          orderBy: { createdAt: 'desc' },
+        },
       },
-      auditLogs: {
-        include: { user: { select: { name: true, division: true } } },
-        orderBy: { createdAt: 'desc' },
-      },
-    },
-  });
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error fetching sprin detail:', err);
+    return null;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET CONFLICT REQUESTS (inbox for operator)
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getConflictRequests() {
-  const session = await auth();
-  if (!session?.user?.id) return [];
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return [];
 
-  return prisma.sprinConflictRequest.findMany({
-    where: {
-      OR: [
-        { approvingOperatorId: session.user.id }, // Operator 1: needs to approve
-        { requestingOperatorId: session.user.id }, // Operator 2: sent the request
-      ],
-    },
-    include: {
-      existingSprin: { include: { createdBy: { select: { name: true, division: true } } } },
-      requestedSprin: { include: { createdBy: { select: { name: true, division: true } } } },
-      targetPersonel: true,
-      requestingOperator: { select: { name: true, division: true } },
-      approvingOperator: { select: { name: true, division: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+    return await prisma.sprinConflictRequest.findMany({
+      where: {
+        OR: [
+          { approvingOperatorId: session.user.id }, // Operator 1: needs to approve
+          { requestingOperatorId: session.user.id }, // Operator 2: sent the request
+        ],
+      },
+      include: {
+        existingSprin: { include: { createdBy: { select: { name: true, division: true } } } },
+        requestedSprin: { include: { createdBy: { select: { name: true, division: true } } } },
+        targetPersonel: true,
+        requestingOperator: { select: { name: true, division: true } },
+        approvingOperator: { select: { name: true, division: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error fetching conflict requests:', err);
+    return [];
+  }
 }

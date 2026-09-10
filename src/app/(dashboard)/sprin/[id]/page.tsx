@@ -23,7 +23,7 @@ export default async function SprinDetailPage({ params }: Props) {
 
   if (!sprin) notFound();
 
-  const isOwner = sprin.createdBy.id === (session?.user as any)?.id;
+  const isOwner = sprin.createdBy?.id === (session?.user as any)?.id;
 
   return (
     <SprinDetailClient

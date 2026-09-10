@@ -8,18 +8,24 @@ export const metadata: Metadata = {
 };
 
 export default async function PersonelPage() {
-  const personelList = await prisma.personel.findMany({
-    orderBy: [{ division: 'asc' }, { rank: 'asc' }, { name: 'asc' }],
-    select: {
-      id: true,
-      nrp: true,
-      name: true,
-      rank: true,
-      jabatan: true,
-      division: true,
-      status: true,
-    },
-  });
+  let personelList: any[] = [];
+  try {
+    personelList = await prisma.personel.findMany({
+      orderBy: [{ division: 'asc' }, { rank: 'asc' }, { name: 'asc' }],
+      select: {
+        id: true,
+        nrp: true,
+        name: true,
+        rank: true,
+        jabatan: true,
+        division: true,
+        status: true,
+      },
+    });
+  } catch (err) {
+    console.error('[PRISMA] Error fetching personel list:', err);
+  }
 
   return <PersonelListClient initialPersonel={personelList as any} />;
 }
+

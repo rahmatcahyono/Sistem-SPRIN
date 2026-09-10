@@ -9,3 +9,6 @@ binding = "ASSETS"
 
 [vars]
 AUTH_TRUST_HOST = "true"
+AUTH_SECRET = "kuncirahasiapuslitbang2026sprin"
+DATABASE_URL = "postgresql://postgres.jnqipntxgtwlounpgger:projectpuslitbang123@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL = "postgresql://postgres.jnqipntxgtwlounpgger:projectpuslitbang123@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
